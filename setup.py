@@ -98,6 +98,21 @@ def linux():
                 # missing command line tools 
                 if "cmdline-tools component is missing" in m_doctor:
                     logger.info("install from android-studio->SDK-Manger->Tools-Command-Line-Tools")
+
+    # install dart support 
+    dart_source = Path("/etc/apt/sources.list.d/dart_stable.list")
+    if not dart_source.exists():
+        logging.warning("missing dart source.list")
+        logging.info("adding dart source.list")
+        _run_command("sudo apt-get update; sudo apt-get install apt-transport-https; wget -qO- https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /usr/share/keyrings/dart.gpg; echo 'deb [signed-by=/usr/share/keyrings/dart.gpg arch=amd64] https://storage.googleapis.com/download.dartlang.org/linux/debian stable main' | sudo tee /etc/apt/sources.list.d/dart_stable.list")
+    
+    # check dart 
+    r, m = _run_command("which dart")
+    if r != 0:
+        logging.warning("missing dart")
+        logging.info("installing dart")
+        _run_command("sudo apt-get install dart")
+    
     return 0
 
 def darwin():
